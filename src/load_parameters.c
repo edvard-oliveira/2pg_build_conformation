@@ -16,9 +16,13 @@ static void initialize_parameters(input_parameters_t *param){
 	param->path_local_execute = Malloc(char, MAX_PATH );	
 	param->initial_pop_file_name = Malloc(char, MAX_FILE_NAME );
 	param->z_matrix_file = Malloc(char, MAX_FILE_NAME );
+	param->top_file = Malloc(char, MAX_FILE_NAME );
 	param->path_gromacs_programs = Malloc(char, MAX_PATH );
+	param->mdp_file_min = Malloc(char, MAX_FILE_NAME );
+	param->force_field = Malloc(char, MAX_FORCE_FIELD_NAME );
 	param->gromacs_energy_min = ener_min_none;
 	param->rotamer_library = rotamer_library_none;
+	param->processor_number = 1;
 }
 
 
@@ -60,7 +64,11 @@ void deAllocateload_parameters(input_parameters_t *param){
 	free(param->path_local_execute);	
 	free(param->initial_pop_file_name );
 	free(param->z_matrix_file);	
+	free(param->top_file);
 	free(param->path_gromacs_programs);
+	free(param->mdp_file_min);
+	free(param->force_field);
+
 
 }
 
@@ -78,8 +86,11 @@ void load_parameters_from_file(input_parameters_t *param,
 	strcpy(param->path_local_execute, conf.getParameterChar("Local_Execute"));
 	strcpy(param->initial_pop_file_name, conf.getParameterChar("IniPopFileName"));
 	strcpy(param->z_matrix_file, conf.getParameterChar("z_matrix_fileName"));
+	strcpy(param->top_file, conf.getParameterChar("top_file"));	
 	strcpy(param->path_gromacs_programs, conf.getParameterChar("Path_Gromacs_Programs"));
+	strcpy(param->mdp_file_min, conf.getParameterChar("mdp_file_min"));
+	strcpy(param->force_field, conf.getParameterChar("force_field"));
 	set_parameter_gromacs_minimization(param,conf.getParameterChar("gromacs_energy_min"));		
 	set_parameter_rotamer_library(param,conf.getParameterChar("rotamer_library"));
-	
+	param->processor_number = atoi(conf.getParameter("processor_number").c_str());;	
 }

@@ -11,6 +11,7 @@
 #include "defines.h"
 #include "functions.h"
 #include "osutil.h"
+#include "gromacs.h"
 
 static void load_database_diehdral_angles(library_dihedral_info_t* lib_dihe_info, const amino_t *primary_sequence,
 		const int *nrresidues, const char *path_database,int *nr_kind_res){

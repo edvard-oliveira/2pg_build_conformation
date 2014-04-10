@@ -16,6 +16,7 @@
 #include "string_owner.h"
 #include "pdbatom.h"
 #include "pdbio.h"
+#include "gromacs.h"
 
 static void save_pop_file(const char *path, const char *file_name,
 		protein ** pop, int pop_size){
@@ -61,6 +62,7 @@ void build_initial_population(const input_parameters_t *in_para){
 	top_global = allocateTop_Global(&numatom, &nresiduos,&bond_angles,
 			&num_protein_side_chains,&num_dihedral_angles_type);
     build_top_global(primary_sequence,top_global);
+    save_topology(in_para->path_local_execute, in_para->top_file,top_global);
 
     /* Here we have must buid the z matrix outside the protein struct because,
        here there is not known the population yet.
@@ -73,7 +75,7 @@ void build_initial_population(const input_parameters_t *in_para){
 
     display_msg("Building Population \n");
     population_p = allocatePopulation(in_para->size_population,nresiduos, 
-        1, top_global->numatom);
+        1, top_global->numatom);    
     for (int p = 0; p < in_para->size_population;p++){
     	create_message(message,&p);
     	display_msg(message);
@@ -86,17 +88,22 @@ void build_initial_population(const input_parameters_t *in_para){
     	}else{
     		fatal_error("Build population falied. Parameter not found \n");
     	}
-        copy_z_matrix(population_p[p]->z_matrix, z_matrix);
-    	//minimization(population_p[p],in_para,top_global, z_matrix, &p);        
-    }
-    
-    //save_pop_file(in_para->path_local_execute,in_para->initial_pop_file_name,
-     //     population_p,in_para->size_population);
-
-
-    display_msg("Creating the Population file \n");
+        copy_z_matrix(population_p[p]->z_matrix, z_matrix);        
+    }    
+    //Saving Diehdral population to Cartesian Population
     pdb_atom_t** pdb_pop = allocate_Population_pdb(&in_para->size_population, &top_global->numatom);
     population2pdb_atom(pdb_pop, population_p, &in_para->size_population, top_global);
+    display_msg("Checking Minimization \n");    
+    if ( in_para->gromacs_energy_min != ener_min_none){
+        init_gromacs_execution();
+        for (int p = 0; p < in_para->size_population;p++){
+            create_message(message,&p);
+            display_msg(message);
+            minimization_gromacs(pdb_pop[p], in_para, &top_global->numatom);
+        }
+        finish_gromacs_execution();
+    }
+    display_msg("Creating the Population file \n");
     save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
         &in_para->size_population, &top_global->numatom, pdb_pop, NULL );
 }

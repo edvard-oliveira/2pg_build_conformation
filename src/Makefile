@@ -13,8 +13,8 @@ OPT_GSL = -static -Wall -lgsl -lgslcblas -lm -pedantic
 
  all:	protpred-Gromacs_pop_initial 
  
-protpred-Gromacs_pop_initial:protpred_pop_initial.o LoadConfig.o messages.o protein.o futil.o build_initial_population.o topology.o topologyio.o topologylib.o functions.o populationio.o build_protein_lib.o randomlib.o nerf.o vector_math.o string_owner.o z_matrix.o z_matrix_lib.o z_matrix_io.o pdbatom.o math_owner.o pdbio.o build_protein.o nerfio.o osutil.o random_number_gsl.o load_parameters.o
-	$(CXX) -o protpred-Gromacs_pop_initial protpred_pop_initial.o LoadConfig.o messages.o protein.o futil.o build_initial_population.o topology.o topologyio.o topologylib.o functions.o populationio.o build_protein_lib.o randomlib.o nerf.o vector_math.o string_owner.o z_matrix.o z_matrix_lib.o z_matrix_io.o pdbatom.o math_owner.o pdbio.o build_protein.o nerfio.o osutil.o random_number_gsl.o load_parameters.o $(OPT_GSL) 
+protpred-Gromacs_pop_initial:protpred_pop_initial.o LoadConfig.o messages.o protein.o futil.o build_initial_population.o topology.o topologyio.o topologylib.o functions.o populationio.o build_protein_lib.o randomlib.o nerf.o vector_math.o string_owner.o z_matrix.o z_matrix_lib.o z_matrix_io.o pdbatom.o math_owner.o pdbio.o build_protein.o nerfio.o osutil.o random_number_gsl.o load_parameters.o gromacs.o
+	$(CXX) -o protpred-Gromacs_pop_initial protpred_pop_initial.o LoadConfig.o messages.o protein.o futil.o build_initial_population.o topology.o topologyio.o topologylib.o functions.o populationio.o build_protein_lib.o randomlib.o nerf.o vector_math.o string_owner.o z_matrix.o z_matrix_lib.o z_matrix_io.o pdbatom.o math_owner.o pdbio.o build_protein.o nerfio.o osutil.o random_number_gsl.o load_parameters.o gromacs.o $(OPT_GSL) 
 	
 
 protpred_pop_initial.o:	protpred_pop_initial.c
@@ -100,3 +100,6 @@ load_parameters.o:	load_parameters.c
 	
 fitnessio.o:	fitnessio.c
 	$(CXX) $(OPT) fitnessio.c -I../include
+
+gromacs.o:	gromacs.c
+	$(CXX) $(OPT) gromacs.c -I../include

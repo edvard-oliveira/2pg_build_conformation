@@ -23,5 +23,3 @@ void build_random_amino_gsl(amino_t *amino_aux, const type_aminos_t *amino,
 static void load_database_diehdral_angles(library_dihedral_info_t* lib_dihe_info,
 		const amino_t *primary_sequence, const int *nrresidues,
 		const char *path_database,int *nr_kind_res);
-
-

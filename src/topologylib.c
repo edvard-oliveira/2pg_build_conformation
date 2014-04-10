@@ -768,7 +768,6 @@ static void set_values_from_topology_2_pdbatoms(pdb_atom_t *pdb_atoms,
  * based on z_matrix.
  * It is assumed that z_matrix and pdbatoms have the same value of index.
  */
-
 	set_pdb_atom_generic_information(&pdb_atoms[*i_z],
 			top_global->top_global_atom[z_matrix->z_matrix_info[*i_z].index_top].atom_name,
 			top_global->top_global_atom[z_matrix->z_matrix_info[*i_z].index_top].res_name,
