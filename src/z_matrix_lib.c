@@ -30,8 +30,7 @@ void _build_z_matrix(z_matrix_global_t *z_matrix, const top_global_t *top){
 	type_aminos_t amino_id;
 	int index_z_matrix = -1;
 	z_matrix->num_elements = 0;
-
-	for (int r = 1; r <= top->numres;r++){
+	for (int r = 1; r <= top->numres;r++){		
 		amino_id = get_amino_id_from_res_id(&r,top);
 		if (r == 1){
 			_add_atoms_backbone_N_Terminal(z_matrix,&index_z_matrix,&r,top);
@@ -236,10 +235,17 @@ static void _add_atom_z_matriz(z_matrix_global_t *z_matrix, int *index_z_matrix,
 static void _add_atoms_backbone(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top){
 	type_aminos_t amino_id;
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_,atmCA_,
-			atmN_, angl_psi_, 1.30, 2.06, 1.53, top);
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN,atmC_,atmCA_,
-			angl_typ_dieh_180, 1.49, 2.12, 1.30, top);
+	if ( (*res_id == 2) && (strcmp(top->top_global_atom[0].res_name, "ACE") == 0) ) {
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_, atmCH3_,
+				atmO_, angl_typ_dieh_1, 1.30, 2.06, 1.53, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN, atmC_, atmCH3_,
+				angl_typ_dieh_180, 1.49, 2.12, 1.30, top);		
+	}else{
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_,atmCA_,
+				atmN_, angl_psi_, 1.30, 2.06, 1.53, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN,atmC_,atmCA_,
+				angl_typ_dieh_180, 1.49, 2.12, 1.30, top);		
+	}
 	_add_atom_z_matriz(z_matrix,index_z_matrix, res_id,atmC, atmCA, atmN, atmC_,
 			angl_phi, 1.53, 1.9, 1.49, top);
 	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmO, atmC, atmCA,atmN,
@@ -273,33 +279,61 @@ static void _add_atoms_backbone_N_Terminal(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top){
 	type_atoms_t atom_reference;
 	int index_reference;
-	//Adding first atom - Nitrogen
-	atom_reference = atmN;
-	*index_z_matrix = *index_z_matrix + 1;
-	_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
-			&atom_reference, res_id,top);
-	//Adding second atom - Alpha Carbon
-	atom_reference = atmCA;
-	*index_z_matrix = *index_z_matrix + 1;
-	_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
-			&atom_reference, res_id,top);
-	z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,atmN,top);
-	z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.49;
-	//Adding third atom - Carbon
-	atom_reference = atmC;
-	*index_z_matrix = *index_z_matrix + 1;
-	_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
-			&atom_reference, res_id,top);
-	z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,
-			atmCA,top);
-	z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.53;
-	z_matrix->z_matrix_info[*index_z_matrix].bond_len_2 = 1.49;
-	z_matrix->z_matrix_info[*index_z_matrix].atom_angle = get_num_atom_from_topol(res_id,
-			atmN,top);
-	z_matrix->z_matrix_info[*index_z_matrix].bond_angle = PI - 1.9042;
-	//Adding four atom - Oxygen
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmO, atmC, atmCA,atmN,
-			angl_typ_dieh_1, 1.21, 2.1145, 1.49, top);
+	if ( (*res_id == 1) && (strcmp(top->top_global_atom[0].res_name,"ACE") == 0) ){
+		//Adding first atom - CH3
+		atom_reference = atmCH3;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		//Adding second atom - C
+		atom_reference = atmC;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,atmCH3,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.53;
+		//Adding third atom - O
+		atom_reference = atmO;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,
+				atmCH3,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.43;
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len_2 = 1.43;
+		z_matrix->z_matrix_info[*index_z_matrix].atom_angle = get_num_atom_from_topol(res_id,
+				atmC,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_angle = PI - 1.9042;
+	}else{
+		//Adding first atom - Nitrogen
+		atom_reference = atmN;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		//Adding second atom - Alpha Carbon
+		atom_reference = atmCA;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,atmN,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.49;
+		//Adding third atom - Carbon
+		atom_reference = atmC;
+		*index_z_matrix = *index_z_matrix + 1;
+		_set_information_atom_z_matrix(z_matrix,&index_reference,index_z_matrix,
+				&atom_reference, res_id,top);
+		z_matrix->z_matrix_info[*index_z_matrix].atom_connected = get_num_atom_from_topol(res_id,
+				atmCA,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len = 1.53;
+		z_matrix->z_matrix_info[*index_z_matrix].bond_len_2 = 1.49;
+		z_matrix->z_matrix_info[*index_z_matrix].atom_angle = get_num_atom_from_topol(res_id,
+				atmN,top);
+		z_matrix->z_matrix_info[*index_z_matrix].bond_angle = PI - 1.9042;
+		//Adding four atom - Oxygen
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmO, atmC, atmCA,atmN,
+				angl_typ_dieh_1, 1.21, 2.1145, 1.49, top);		
+	}
+
 }
 
 static void _add_atoms_backbone_N_Terminal_DATABASE(z_matrix_global_t *z_matrix,
@@ -337,16 +371,23 @@ static void _add_atoms_backbone_N_Terminal_DATABASE(z_matrix_global_t *z_matrix,
 
 static void _add_atoms_backbone_C_terminal(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top){
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_,atmCA_,
-			atmN_, angl_psi_, 1.53, 2.0488, 1.30, top);
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN,atmC_,atmCA_,
-			angl_typ_dieh_180, 1.30, 2.0933, 1.49, top);
-	_add_atom_z_matriz(z_matrix,index_z_matrix, res_id,atmC, atmCA, atmN, atmC_,
-			angl_phi, 1.49, 1.9042, 1.53, top);
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmOT1, atmC, atmCA,atmN,
-			angl_typ_dieh_3, 1.53, 2.1145, 1.21, top);
-	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmOT2, atmC, atmCA,atmN,
-			angl_typ_dieh_3, 1.53, 2.1145, 1.21, top);
+	if ( strcmp(top->top_global_atom[top->numatom-1].res_name, "NME") == 0){
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_,atmCA_,
+				atmN_, angl_psi_, 1.53, 2.0488, 1.30, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmCH3, atmN, atmC_,atmCA_,
+				angl_typ_dieh_0, 1.30, 2.0933, 1.49, top);
+	}else{
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_,atmCA_,
+				atmN_, angl_psi_, 1.53, 2.0488, 1.30, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN,atmC_,atmCA_,
+				angl_typ_dieh_180, 1.30, 2.0933, 1.49, top);
+		_add_atom_z_matriz(z_matrix,index_z_matrix, res_id,atmC, atmCA, atmN, atmC_,
+				angl_phi, 1.49, 1.9042, 1.53, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmOT1, atmC, atmCA,atmN,
+				angl_typ_dieh_3, 1.53, 2.1145, 1.21, top);
+		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmOT2, atmC, atmCA,atmN,
+				angl_typ_dieh_3, 1.53, 2.1145, 1.21, top);
+	}
 }
 
 static void _add_atoms_backbone_C_terminal_DATABASE(z_matrix_global_t *z_matrix,
@@ -686,73 +727,84 @@ static void _add_hydrogen_atoms_backbone(z_matrix_global_t *z_matrix,
 	 *
 	 * Firstly is checked kind of amino. GLY has HA2 atom which is not present
 	 * in other amino. Because of this, GLY has specific check.
-	 */
-	if (*amino_id == aGLY){
-		if (*res_id == 1){//N-Terminal
-			_add_hydrogen_atoms_backbone_GLY_N_Terminal(z_matrix,
-					index_z_matrix, res_id, top);
-		}else{
-			_add_hydrogen_atoms_backbone_GLY(z_matrix, index_z_matrix, res_id,
-					top);
-		}
-	}else{
-		if (*res_id == 1){//N-Terminal
-			if ( (*amino_id != aPRO) && (*amino_id != aHIS) )
-				_add_hydrogen_atoms_backbone_N_Terminal(z_matrix, index_z_matrix,
-						res_id, top);
-			else{
-				if (*amino_id == aPRO){
-					_add_hydrogen_atoms_backbone_N_Terminal_PRO(z_matrix, index_z_matrix,
-							res_id, top);
-				}
-				if (*amino_id == aHIS){
-					_add_hydrogen_atoms_backbone_N_Terminal_HIS(z_matrix, index_z_matrix,
-							res_id, top);
-				}
-			}
-		}else  {
-			if (*amino_id == aARG){
-				_add_hydrogen_atoms_backbone_ARG(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aALA){
-				_add_hydrogen_atoms_backbone_ALA(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aASN){
-				_add_hydrogen_atoms_backbone_ASN(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aASP){
-				_add_hydrogen_atoms_backbone_ASP(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aCYS){
-				_add_hydrogen_atoms_backbone_CYS(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aGLN){
-				_add_hydrogen_atoms_backbone_GLN(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aGLU){
-				_add_hydrogen_atoms_backbone_GLU(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aILE){
-				_add_hydrogen_atoms_backbone_ILE(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aLEU){
-				_add_hydrogen_atoms_backbone_LEU(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aLYS){
-				_add_hydrogen_atoms_backbone_LYS(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aSER){
-				_add_hydrogen_atoms_backbone_SER(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aMET){
-				_add_hydrogen_atoms_backbone_MET(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aPHE){
-				_add_hydrogen_atoms_backbone_PHE(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aPRO){
-				_add_hydrogen_atoms_backbone_PRO(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aTHR){
-				_add_hydrogen_atoms_backbone_THR(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aTRP){
-				_add_hydrogen_atoms_backbone_TRP(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aTYR){
-				_add_hydrogen_atoms_backbone_TYR(z_matrix, index_z_matrix, res_id,top);
-			}else if (*amino_id == aVAL){
-				_add_hydrogen_atoms_backbone_VAL(z_matrix, index_z_matrix, res_id,top);
-			}else if ( (*amino_id == aHIS) || (*amino_id == aHSD) || (*amino_id == aHSE)){
-				_add_hydrogen_atoms_backbone_HIS(z_matrix, index_z_matrix, res_id,top);
-			}
+	 */	
+	if (*res_id == top->numres){ //C-Terminal
+		if (strcmp(top->top_global_atom[top->numatom-1].res_name, "NME") == 0) {
+			_add_hydrogen_atoms_backbone_NME_C_Terminal(z_matrix, index_z_matrix, 
+				res_id, top);
 		}
 	}
+	if ( (*res_id == 1) && strcmp(top->top_global_atom[0].res_name, "ACE") == 0){
+			_add_hydrogen_atoms_backbone_ACE_N_Terminal(z_matrix,
+					index_z_matrix, res_id, top);
+	}else{
+		if (*amino_id == aGLY){
+			if (*res_id == 1){//N-Terminal
+				_add_hydrogen_atoms_backbone_GLY_N_Terminal(z_matrix,
+						index_z_matrix, res_id, top);
+			}else{
+				_add_hydrogen_atoms_backbone_GLY(z_matrix, index_z_matrix, res_id,
+						top);
+			}
+		}else{
+			if (*res_id == 1){//N-Terminal
+				if ( (*amino_id != aPRO) && (*amino_id != aHIS) )
+					_add_hydrogen_atoms_backbone_N_Terminal(z_matrix, index_z_matrix,
+							res_id, top);
+				else{
+					if (*amino_id == aPRO){
+						_add_hydrogen_atoms_backbone_N_Terminal_PRO(z_matrix, index_z_matrix,
+								res_id, top);
+					}
+					if (*amino_id == aHIS){
+						_add_hydrogen_atoms_backbone_N_Terminal_HIS(z_matrix, index_z_matrix,
+								res_id, top);
+					}
+				}
+			}else  {
 
+				if (*amino_id == aARG){
+					_add_hydrogen_atoms_backbone_ARG(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aALA){
+					_add_hydrogen_atoms_backbone_ALA(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aASN){
+					_add_hydrogen_atoms_backbone_ASN(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aASP){
+					_add_hydrogen_atoms_backbone_ASP(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aCYS){
+					_add_hydrogen_atoms_backbone_CYS(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aGLN){
+					_add_hydrogen_atoms_backbone_GLN(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aGLU){
+					_add_hydrogen_atoms_backbone_GLU(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aILE){
+					_add_hydrogen_atoms_backbone_ILE(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aLEU){
+					_add_hydrogen_atoms_backbone_LEU(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aLYS){
+					_add_hydrogen_atoms_backbone_LYS(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aSER){
+					_add_hydrogen_atoms_backbone_SER(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aMET){
+					_add_hydrogen_atoms_backbone_MET(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aPHE){
+					_add_hydrogen_atoms_backbone_PHE(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aPRO){
+					_add_hydrogen_atoms_backbone_PRO(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aTHR){
+					_add_hydrogen_atoms_backbone_THR(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aTRP){
+					_add_hydrogen_atoms_backbone_TRP(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aTYR){
+					_add_hydrogen_atoms_backbone_TYR(z_matrix, index_z_matrix, res_id,top);
+				}else if (*amino_id == aVAL){
+					_add_hydrogen_atoms_backbone_VAL(z_matrix, index_z_matrix, res_id,top);
+				}else if ( (*amino_id == aHIS) || (*amino_id == aHSD) || (*amino_id == aHSE)){
+					_add_hydrogen_atoms_backbone_HIS(z_matrix, index_z_matrix, res_id,top);
+				}
+			}
+		}		
+	}
 }
 
 static void _add_hydrogen_atoms_backbone_N_Terminal_HIS(z_matrix_global_t *z_matrix,
@@ -981,6 +1033,31 @@ static void _add_hydrogen_atoms_backbone_GLY_N_Terminal(z_matrix_global_t *z_mat
 	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHA2, atmCA, atmC,
 			atmN, angl_typ_dieh_180, 1.0, 1.9106, 1.53, top); // 1.9106 = 109.47
 }
+
+static void _add_hydrogen_atoms_backbone_ACE_N_Terminal(z_matrix_global_t *z_matrix,
+		int *index_z_matrix, const int *res_id, const top_global_t *top){
+	/*Adds all Hydrogen atoms for ACE residue in backbone */
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH31, atmCH3, atmC,
+			atmO, angl_typ_dieh_180, 1.0, 1.9106, 1.49, top); 
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH32, atmCH3, atmC,
+			atmO, angl_typ_dieh_trans_120, 1.0, 1.9106, 1.49, top); 
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH33, atmCH3, atmC,
+			atmO, angl_typ_dieh_trans_240, 1.0, 1.9106, 1.49, top); 
+}
+
+static void _add_hydrogen_atoms_backbone_NME_C_Terminal(z_matrix_global_t *z_matrix,
+		int *index_z_matrix, const int *res_id, const top_global_t *top){
+	/*Adds all Hydrogen atoms for NME residue in backbone */
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmH, atmN, atmC_,
+			atmCA_, angl_psi_, 1.0, 1.9106, 1.49, top); 	
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH31, atmCH3, atmN,
+			atmC_, angl_typ_dieh_180, 1.0, 1.9106, 1.49, top); 
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH32, atmCH3, atmN,
+			atmC_, angl_typ_dieh_trans_120, 1.0, 1.9106, 1.49, top); 
+	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH33, atmCH3, atmN,
+			atmC_, angl_typ_dieh_trans_240, 1.0, 1.9106, 1.49, top); 
+}
+
 static void _add_hydrogen_atoms_backbone_ARG(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top){
 	/*Adds all Hydrogen atoms for ARG residue in backbone */

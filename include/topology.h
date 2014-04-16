@@ -69,6 +69,7 @@ int get_number_atoms_from_res(const int *res_id, const type_aminos_t *amino_id,
 		const top_global_t *top);
 int get_number_atoms_from_res_C_Terminal(const type_aminos_t *amino_id,
 		const top_global_t *top);
+
 const topol_residue_atoms_t* get_topol_residue_atoms_t_from_res(int *num_atom,
 		const int *res_id, 	const type_aminos_t *amino_id,
 		const top_global_t *top);
@@ -86,6 +87,7 @@ static void set_residue_atoms_bond_from_topol_ff_N_Terminal(
 static void set_residue_atoms_bond_from_topol_ff_C_Terminal(
 		int *last_index_atm_bond,const int *res_id, type_aminos_t amino_id,
 		const top_global_t *top);
+
 /*static void set_residue_atoms_bond_from_topol_ff_N_Terminal(
 		int *last_index_atm_bond, const int *res_id, type_aminos_t amino_id,
 		const top_global_t *top);

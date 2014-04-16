@@ -20,6 +20,9 @@ static void initialize_parameters(input_parameters_t *param){
 	param->path_gromacs_programs = Malloc(char, MAX_PATH );
 	param->mdp_file_min = Malloc(char, MAX_FILE_NAME );
 	param->force_field = Malloc(char, MAX_FORCE_FIELD_NAME );
+    param->n_terminal_charge = term_charge_NR;
+    param->c_terminal_charge = term_charge_NR;
+
 	param->gromacs_energy_min = ener_min_none;
 	param->rotamer_library = rotamer_library_none;
 	param->processor_number = 1;
@@ -72,6 +75,12 @@ void deAllocateload_parameters(input_parameters_t *param){
 
 }
 
+void set_terminal_charge(input_parameters_t *param, char *param_c_terminal, 
+	char *param_n_terminal){
+	param->n_terminal_charge = str2terminal_charge(param_n_terminal);
+	param->c_terminal_charge = str2terminal_charge(param_c_terminal);
+}
+
 void load_parameters_from_file(input_parameters_t *param,
 		const char *conf_file_name){
 	/*Loading the configuration from file*/
@@ -93,4 +102,8 @@ void load_parameters_from_file(input_parameters_t *param,
 	set_parameter_gromacs_minimization(param,conf.getParameterChar("gromacs_energy_min"));		
 	set_parameter_rotamer_library(param,conf.getParameterChar("rotamer_library"));
 	param->processor_number = atoi(conf.getParameter("processor_number").c_str());;	
+
+	set_terminal_charge(param, conf.getParameterChar("c_terminal_charge"),
+		conf.getParameterChar("n_terminal_charge"));
+
 }

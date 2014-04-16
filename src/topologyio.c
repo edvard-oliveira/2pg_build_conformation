@@ -156,6 +156,7 @@ void _save_topology_file(const char *path, const char *file_name,
 	write_next_section(ftop);
 	write_residues_atoms_section(ftop,top);
 	write_next_section(ftop);
+/*	
 	write_residues_atoms_dihedral_phi_section(ftop,top);
 	write_next_section(ftop);
 	write_residues_atoms_dihedral_psi_section(ftop,top);
@@ -255,6 +256,7 @@ amino_t *_load_fasta_pdb(const char *file_name_protein, int *n_residues,
     int i;
     boolean_t first_line = btrue;
     boolean_t read_fasta_file = btrue;
+    char *seq_line_2;
 
 	arq = open_file(file_name_protein, fREAD);
 	fgets(line,MAX_LINE_FASTA,arq);
@@ -310,6 +312,18 @@ amino_t *_load_fasta_pdb(const char *file_name_protein, int *n_residues,
 		set_has_his(has_his,&amino_id);
         primary_seq_index = primary_seq_index + 1;
 	}
+
+	check_terminal_charge(seq_prim->aminoacido, n_residues);
+/*
+	check_terminal_charge(seq_prim->seq_res->id_1, );
+	for (int i = 0; i < *n_residues; i++){
+		aux_line = seq_prim[i].aminoacido;
+		strcpy(seq_prim->seq_res[i].id_1, &aux_line);
+		seq_prim->seq_res[i].id = _get_amino_id_1(aux_line);
+		set_amino_id_3(seq_prim->seq_res[i].id_3, &sseq_prim[i].id);
+        seq_index = seq_index + 1;
+	}
+*/
 	return seq_prim;
 
 }
@@ -333,6 +347,7 @@ amino_t *_load_protein2(const char *file_name_protein, int *n_residues,
 	*num_protein_side_chains = 0; //Initialize number of protein chains
 	*num_dihedral_angles_type = 0; //Initialize number of dihedral angles of protein
 	primary_seq_index = 0;
+	char aux_line;
 
 	fscanfError = fscanf(arq, "%c", &c); //starts to read protein sequence
 	while (!feof(arq) && ( c != ' ' && c != '\n')) {

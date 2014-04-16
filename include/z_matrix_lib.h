@@ -174,3 +174,7 @@ static void _add_hydrogen_atoms_side_chains_ARG(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top);
 static void _add_hydrogen_atoms_side_chains_ALA(z_matrix_global_t *z_matrix,
 		int *index_z_matrix, const int *res_id, const top_global_t *top);
+static void _add_hydrogen_atoms_backbone_ACE_N_Terminal(z_matrix_global_t *z_matrix,
+		int *index_z_matrix, const int *res_id, const top_global_t *top);
+static void _add_hydrogen_atoms_backbone_NME_C_Terminal(z_matrix_global_t *z_matrix,
+		int *index_z_matrix, const int *res_id, const top_global_t *top);

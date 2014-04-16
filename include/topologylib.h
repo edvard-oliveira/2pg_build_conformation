@@ -74,4 +74,4 @@ static int _get_atom_index_from_top_global_dihedral_side_chain_t(
 		const top_global_t *top_global);
 static float  _compute_side_chains_angles(const int *r, const int *chi,
 		const pdb_atom_t *pdb_atoms, const top_global_t *top_global);
-
+void check_terminal_charge(char *primary_seq, const int *num_res);

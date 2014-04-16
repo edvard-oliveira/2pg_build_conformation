@@ -18,6 +18,10 @@ typedef struct sinput_parameters {
     int processor_number;
     char *mdp_file_min; // Indicates the name of mdp file
     char *force_field; // Indicates what is the force field
+    /*set who can be neutralize N-Terminal*/
+    type_terminal_charge_t n_terminal_charge;    
+    /*set who can be neutralize C-Terminal*/    
+    type_terminal_charge_t c_terminal_charge;    
 
  }input_parameters_t;
 

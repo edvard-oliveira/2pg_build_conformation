@@ -572,14 +572,28 @@ static void build_section_dihedral(const amino_t *primary_sequence,top_global_t 
 	type_aminos_t amino_id;
 	for (int r=1; r<=top->numres;r++){
         amino_id = primary_sequence[r-1].id;
-        //Phi angle
-        set_residue_atoms_dihedral_phi_from_topol_ff(&index_atm_angle,&r,amino_id, top);
-        //Psi angle
-        set_residue_atoms_dihedral_psi_from_topol_ff(&index_atm_angle_psi,&r,amino_id, top);
-        //Omega angle
-        set_residue_atoms_dihedral_omega_from_topol_ff(&index_atm_angle_omega,&r,amino_id, top);        
-        // side chains angle
-        set_residue_atoms_dihedral_side_chains_from_topol_ff(&index_atm_angle_side_chains,&r,amino_id, top);
+        if (r == 37){
+        	printf("%i\n", r);
+        }
+        if (amino_id != aX){
+	        //Phi angle
+	        set_residue_atoms_dihedral_phi_from_topol_ff(&index_atm_angle,&r,amino_id, top);
+	        //Psi angle
+	        set_residue_atoms_dihedral_psi_from_topol_ff(&index_atm_angle_psi,&r,amino_id, top);
+	        //Omega angle
+	        set_residue_atoms_dihedral_omega_from_topol_ff(&index_atm_angle_omega,&r,amino_id, top);        
+	        // side chains angle
+	        set_residue_atoms_dihedral_side_chains_from_topol_ff(&index_atm_angle_side_chains,&r,amino_id, top);
+        }else{
+        	if (r == 1){
+        		//It means that ACE has 6 atoms. Therefore, It is N_terminal. So 6 first atoms
+        		index_atm_angle = 5;
+        	}else if (r == top->numres){
+        		//It means that NME has 6 atoms. Therefore, It is C_terminal. So 6 last atoms
+        		index_atm_angle = index_atm_angle + 5; 
+        	}
+        	
+        }
 	}
 }
 
@@ -589,9 +603,6 @@ static void build_section_dihedral_angle_types(const amino_t *primary_sequence,
 	int index_atm_angle = -1;
 	type_aminos_t amino_id;
 	for (int r=1; r<=top->numres;r++){
-		if (r==12){
-			printf("%d\n",r);
-		}
         amino_id = primary_sequence[r-1].id;
         set_residue_atoms_dihedral_angle_type_from_topol_ff(&index_atm_angle,&r,amino_id, top);
 	}
@@ -612,7 +623,7 @@ void set_protein_charge_in_topol(top_global_t *top){
 
 void build_top_global(const amino_t *sequence_primary, top_global_t *top){
 	/*Build the global topology*/
-    build_sections_atom_and_residue_atoms(sequence_primary,top);
+    build_sections_atom_and_residue_atoms(sequence_primary,top);    
     build_section_dihedral(sequence_primary,top);
     /* I commented because my focus is built the Z matrix which has all these
      * parameters. My time is shorter to review this part of program.

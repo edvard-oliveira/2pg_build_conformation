@@ -24,6 +24,8 @@
 #include"aminoacids/charmm27/HIS.h"
 #include"aminoacids/charmm27/HSE.h"
 #include"aminoacids/charmm27/HSD.h"
+#include"aminoacids/charmm27/ACE.h"
+#include"aminoacids/charmm27/NME.h"
 
 topol_residue_atoms_dihedral_angles_t residue_atom_diehdral_omega [] = {
 		{atmCA, atmC, atmN_plus, atmCA_plus} //atmHA
@@ -73,9 +75,8 @@ topol_residues_t topol_residues_ff_N_Terminal []= {
 		                               {aTRP,"TRP","W",26,2,0,residue_atoms_TRP_N_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_TRP,2,NULL, residue_atom_diehdral_omega},
 		                               {aTYR,"TYR","Y",23,2,0,residue_atoms_TYR_N_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_TYR,2,NULL, residue_atom_diehdral_omega},
 		                               {aVAL,"VAL","V",18,1,0,residue_atoms_VAL_N_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_VAL,2,NULL, residue_atom_diehdral_omega},
-		                               {aHIS,"HIS","H",19,2,0,residue_atoms_HIS_N_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_HIS,2,NULL, residue_atom_diehdral_omega}
-
-
+		                               {aHIS,"HIS","H",19,2,0,residue_atoms_HIS_N_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_HIS,2,NULL, residue_atom_diehdral_omega},
+		                               {aX,"ACE","X",6,0,0,residue_atoms_ACE_N_Terminal, NULL,8,NULL,4,NULL, NULL, NULL, 2, NULL, NULL}
 };
 
 /*The index of topol_residues_ff is type_aminos_t */
@@ -127,6 +128,7 @@ topol_residues_t topol_residues_ff_C_Terminal []= {
         {aTRP,"TRP","W",25,2,0,residue_atoms_TRP_C_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_TRP,2,NULL, residue_atom_diehdral_omega},
         {aTYR,"TYR","Y",22,2,0,residue_atoms_TYR_C_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_TYR,2,NULL, residue_atom_diehdral_omega},
         {aVAL,"VAL","V",17,1,0,residue_atoms_VAL_C_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_VAL,2,NULL, residue_atom_diehdral_omega},
-        {aHIS,"HIS","H",18,2,0,residue_atoms_HIS_C_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_HIS,2,NULL, residue_atom_diehdral_omega}
+        {aHIS,"HIS","H",18,2,0,residue_atoms_HIS_C_Terminal,NULL,8,NULL,4,residue_atom_diehdral_phi, residue_atom_diehdral_psi,residue_atom_diehdral_rot_HIS,2,NULL, residue_atom_diehdral_omega},
+		{aX,"NME","X",6,0,0,residue_atoms_NME_C_Terminal,NULL,8,NULL,4,NULL, NULL,NULL,2,NULL, NULL}
 };
 #endif

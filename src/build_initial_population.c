@@ -61,7 +61,8 @@ void build_initial_population(const input_parameters_t *in_para){
     display_msg("Build Topology \n");
 	top_global = allocateTop_Global(&numatom, &nresiduos,&bond_angles,
 			&num_protein_side_chains,&num_dihedral_angles_type);
-    build_top_global(primary_sequence,top_global);
+    //build_top_global(primary_sequence,top_global);
+    build_top_global_without_dihedral(primary_sequence,top_global);
     save_topology(in_para->path_local_execute, in_para->top_file,top_global);
 
     /* Here we have must buid the z matrix outside the protein struct because,

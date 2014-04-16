@@ -327,6 +327,15 @@ type_aminos_t get_amino_id(char c){
 			case 'G': //glicina
 				amino_id =  aGLY;
 				break;
+			case '0': //ACE
+				amino_id =  aACE;
+				break;				
+			case '1': //NME
+				amino_id =  aNME;
+				break;				
+			case 'X': //Any
+				amino_id =  aX;
+				break;								
 			default:
 				amino_id = aNR;
 				char mens [] = "Amino value is not known. Please, check your file.";
@@ -400,6 +409,40 @@ void set_do_dssp_percentage(float *percentage_helix, float *percentage_beta,
 
 }
 
+/** Converts string to type_terminal_charge type
+* s_term_charge means the string that will be converted to type_terminal_charge
+* returns type_terminal_charge
+*/
+type_terminal_charge_t str2terminal_charge(const char *s_term_charge){
+	char *s_none, *s_ace, *s_nme;
+
+	s_none = Malloc(char, 5); 
+	s_ace  = Malloc(char, 4); 
+	s_nme = Malloc(char, 4); 
+
+	strcpy(s_none, "none");
+	strcpy(s_ace, "ACE");
+	strcpy(s_nme, "NME");
+
+	type_terminal_charge_t ret;
+	if ( strcmp(s_term_charge, s_none) == 0){
+		ret = term_charge_none;
+	}else if ( strcmp(s_term_charge,s_ace)  == 0) {
+		ret = term_charge_ACE;
+	}else if ( strcmp(s_term_charge, s_nme) == 0){
+		ret =  term_charge_NME;
+	}else{
+ 		char msg[300];
+ 	    sprintf(msg,"%s it is not found at  str2terminal_charge function \n", s_term_charge);
+  		fatal_error(msg);		
+	}
+
+	free(s_none);
+	free(s_ace);
+	free(s_nme);
+
+	return ret;
+}
 /*
  amino_t *load_protein(char *file_name_protein, int *nresiduos, int *numatom) {
 		// Build the primary sequence of the protein which is used a lot of functions.

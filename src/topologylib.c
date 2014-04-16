@@ -1,7 +1,7 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 #include "defines.h"
 #include "enums.h"
@@ -776,6 +776,7 @@ static void set_values_from_topology_2_pdbatoms(pdb_atom_t *pdb_atoms,
 			&top_global->top_global_atom[z_matrix->z_matrix_info[*i_z].index_top].atom_number
 			);
 }
+
 type_aminos_t _get_amino_id_3(char *c){
 /*Receives an amino (char) and returns your id*/
 		type_aminos_t amino_id;
@@ -820,7 +821,12 @@ type_aminos_t _get_amino_id_3(char *c){
 			amino_id =  aHIS;
 		}else if ( (strcmp(c,"LYS") == 0) ){
 			amino_id =  aLYS;
-		}else{
+		}else if ( (strcmp(c,"ACE") == 0) ){
+			amino_id =  aACE;
+		}else if ( (strcmp(c,"NME") == 0) ){
+			amino_id =  aNME;
+		}
+		else{
 			if (strcmp(c,"") == 0){
 				sprintf(msg,"Amino not found, because amino variable is empty. Check it. \n");
 			}else{
@@ -1119,4 +1125,21 @@ const topol_residue_atoms_t* _get_topol_residue_atoms_t_from_res(int *num_atom,
 		fatal_error("An error was found when try to execute the _get_topol_residue_atoms_t_from_res function \n");
 	}
 	return atom_ff;
+}
+
+/** Check N-Terminal and C-Terminal of primary sequence. When there is X, it will be
+* set ACE or NME.
+*
+* primary_seq is the primary sequence of protein
+* num_res is the number of residue of protein
+*/
+void check_terminal_charge(char *primary_seq, const int *num_res){
+	//Checking N-Terminal
+	if (primary_seq[0] == 'X'){		
+		primary_seq[0] = '0'; // It Means ACE
+	}
+	//Checking C-Terminal
+	if (primary_seq[*num_res-1] == 'X'){		
+		primary_seq[*num_res-1] = '1'; // It Means NME
+	}
 }

@@ -33,6 +33,7 @@ void set_numatom_from_topol(int *numatom, const int *nr_atm_ff);
 void set_do_dssp_percentage(float *percentage_helix, float *percentage_beta,
 		float *percentage_total, const char *path_local_execute,
 		const char *file_name);
+type_terminal_charge_t str2terminal_charge(const char *s_term_charge);
 
 /*Set seqtyp array that is used for buildpdb*/
 

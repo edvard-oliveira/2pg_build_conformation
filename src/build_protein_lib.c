@@ -31,7 +31,9 @@ static amino_database_parameters_t amino_database_parameters [] = {
 		{aTRP,5493,"triptofano.txt",8,2,"trp_lat.txt","%f %f %f %f"},
 		{aTYR,13042,"tirosina.txt",7,2,"tyr_lat.txt","%f %f %f %f"},
 		{aVAL,25616,"valina.txt",3,1,"val_lat.txt","%f %f %f"},
-		{aHIS,8788,"histidina.txt",8,2,"his_lat.txt","%f %f %f %f"}
+		{aHIS,8788,"histidina.txt",8,2,"his_lat.txt","%f %f %f %f"},
+		{aX,1,"",0,0,"",""}
+
 
 };
 
@@ -204,53 +206,63 @@ void _load_amino_database(library_dihedral_info_t *lib_dihe, type_aminos_t amino
     long int max_value;
     int index_amino;
 
-    //Obtain the index of amino_database_parameters for amino
-    index_amino = get_index_amino_database_parameters(amino);
+    if (amino != aX){
+	    //Obtain the index of amino_database_parameters for amino
+	    index_amino = get_index_amino_database_parameters(amino);
 
-    //Opening torsional file database
-    
-    pathFileName = path_join_file(database,amino_database_parameters[index_amino].file_torsion);
-    tor_file = open_file(pathFileName,fREAD);
-    //Get the number of torsional angle from database file
-	fscanfError = fscanf(tor_file,"%ld",&max_value);
-	_check_max_number(&amino_database_parameters[index_amino].max_torsional_angles, &max_value);
-	//Loading database file torsional angles
-	lib_dihe[*index_res].aminoid = amino;
-	lib_dihe[*index_res].torsional = allocate_library_dihedral_info_tors(max_value);
-	lib_dihe[*index_res].num_torsional = max_value;
-	for (int l = 0;l <max_value;l++ ){
-		fscanfError = fscanf(tor_file,"%f %f",&phi, &psi);
-		lib_dihe[*index_res].torsional[l].id = l;
-		lib_dihe[*index_res].torsional[l].phi = degree2radians(&phi);
-		lib_dihe[*index_res].torsional[l].psi = degree2radians(&psi);
-	}
-
-	lib_dihe[*index_res].side_chains = NULL;
-	lib_dihe[*index_res].num_side_chains = amino_database_parameters[index_amino].max_side_chains_angles;
-	lib_dihe[*index_res].num_angles_angles = amino_database_parameters[index_amino].num_side_angles;
-
-	if (amino_database_parameters[index_amino].max_side_chains_angles > 0){
-		pathFileName_side_chain = path_join_file(database,amino_database_parameters[index_amino].file_side_chains);
-	    side_chain_file = open_file(pathFileName_side_chain,fREAD);
-	    //Get the number of side_chains angle from database file
-		fscanfError = fscanf(side_chain_file,"%ld",&max_value);
-		_check_max_number(&amino_database_parameters[index_amino].max_side_chains_angles, &max_value);
-		//Loading database file side chains angles
-		lib_dihe[*index_res].side_chains = allocate_library_dihedral_info_side_chains(max_value);
-		lib_dihe[*index_res].num_side_chains = max_value;
-		lib_dihe[*index_res].num_angles_angles = amino_database_parameters[index_amino].num_side_angles;
+	    //Opening torsional file database    
+	    pathFileName = path_join_file(database,amino_database_parameters[index_amino].file_torsion);
+	    tor_file = open_file(pathFileName,fREAD);
+	    //Get the number of torsional angle from database file
+		fscanfError = fscanf(tor_file,"%ld",&max_value);
+		_check_max_number(&amino_database_parameters[index_amino].max_torsional_angles, &max_value);
+		//Loading database file torsional angles
+		lib_dihe[*index_res].aminoid = amino;
+		lib_dihe[*index_res].torsional = allocate_library_dihedral_info_tors(max_value);
+		lib_dihe[*index_res].num_torsional = max_value;
 		for (int l = 0;l <max_value;l++ ){
-			_get_line_values(side_chain_file,&amino,amino_database_parameters[index_amino].format_file,&chi1,
-					&chi2,&chi3,&chi4,&chi5,&freq,&despad,&fscanfError);
-			_side_chain_database_line2lib_dieh_info(lib_dihe,index_res, &amino,
-					&chi1,&chi2,&chi3,&chi4,&chi5,&freq,&despad,&l);
+			fscanfError = fscanf(tor_file,"%f %f",&phi, &psi);
+			lib_dihe[*index_res].torsional[l].id = l;
+			lib_dihe[*index_res].torsional[l].phi = degree2radians(&phi);
+			lib_dihe[*index_res].torsional[l].psi = degree2radians(&psi);
 		}
-		free(pathFileName_side_chain);
-		fclose(side_chain_file);
-	}
-	free(pathFileName);
-	fclose(tor_file);
 
+		lib_dihe[*index_res].side_chains = NULL;
+		lib_dihe[*index_res].num_side_chains = amino_database_parameters[index_amino].max_side_chains_angles;
+		lib_dihe[*index_res].num_angles_angles = amino_database_parameters[index_amino].num_side_angles;
+
+		if (amino_database_parameters[index_amino].max_side_chains_angles > 0){
+			pathFileName_side_chain = path_join_file(database,amino_database_parameters[index_amino].file_side_chains);
+		    side_chain_file = open_file(pathFileName_side_chain,fREAD);
+		    //Get the number of side_chains angle from database file
+			fscanfError = fscanf(side_chain_file,"%ld",&max_value);
+			_check_max_number(&amino_database_parameters[index_amino].max_side_chains_angles, &max_value);
+			//Loading database file side chains angles
+			lib_dihe[*index_res].side_chains = allocate_library_dihedral_info_side_chains(max_value);
+			lib_dihe[*index_res].num_side_chains = max_value;
+			lib_dihe[*index_res].num_angles_angles = amino_database_parameters[index_amino].num_side_angles;
+			for (int l = 0;l <max_value;l++ ){
+				_get_line_values(side_chain_file,&amino,amino_database_parameters[index_amino].format_file,&chi1,
+						&chi2,&chi3,&chi4,&chi5,&freq,&despad,&fscanfError);
+				_side_chain_database_line2lib_dieh_info(lib_dihe,index_res, &amino,
+						&chi1,&chi2,&chi3,&chi4,&chi5,&freq,&despad,&l);
+			}
+			free(pathFileName_side_chain);
+			fclose(side_chain_file);
+		}
+		free(pathFileName);
+		fclose(tor_file);
+    }else{
+    	//Here residue is aX. So it is either ACE or NME.
+		lib_dihe[*index_res].aminoid = amino;
+		lib_dihe[*index_res].torsional = allocate_library_dihedral_info_tors(1);
+		lib_dihe[*index_res].num_torsional = 1;
+		lib_dihe[*index_res].torsional[0].phi = 0;
+		lib_dihe[*index_res].torsional[0].psi = 0;
+
+    	lib_dihe[*index_res].num_side_chains = 0;
+    	lib_dihe[*index_res].side_chains = NULL;
+    }
 }
 
 static void _get_line_values(FILE *side_chain_file, const type_aminos_t *amino, const char *format,
@@ -670,7 +682,7 @@ amino_t * _get_unique_res(int *nr_kind_res,const amino_t *primary_sequence,
 	 * Example: input ARGERA, output AREG
 	 */
 	amino_t * aux_seq;
-	amino_t *amino_default = allocateAmino(20);
+	amino_t *amino_default = allocateAmino(21);
 
     //Obtain the number of kind residues. This number is used for
     //allocating aux_seq
@@ -686,7 +698,7 @@ amino_t * _get_unique_res(int *nr_kind_res,const amino_t *primary_sequence,
     	aux_seq[r].late = NULL; // It is forced to be NULL, because there is a check at copy_amino_allocating
     	copy_amino_allocating_only(&aux_seq[r],&amino_default[r]);
     }
-    deAllocateAmino(amino_default,20);
+    deAllocateAmino(amino_default,21);
 	return aux_seq;
 }
 

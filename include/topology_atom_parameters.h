@@ -8,7 +8,8 @@ special_atom_parameters_t special_atom_parameters [] = {
         {atmC_,atmC,-1},
         {atmN_plus,atmN,+1},
         {atmO_,atmO,-1},
-        {atmN_,atmN,-1}
+        {atmN_,atmN,-1},
+        {atmCH3_,atmCH3,-1}
 
 };
 
