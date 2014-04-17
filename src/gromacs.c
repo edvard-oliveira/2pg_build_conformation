@@ -641,8 +641,8 @@ void call_mdrun2minimization(const char *pdbfile, const char *local_execute,
 
 /** Applies minimization process by GROMACS
 */
-void minimization_gromacs(pdb_atom_t *pdb_atoms, const input_parameters_t *in_para,
-	const int *numatom){
+void minimization_gromacs(pdb_atom_t *pdb_atoms, char *pdbfile_ret, int *numatom_after_min, 
+	const input_parameters_t *in_para, const int *numatom){
 	char *pdbfile;
 	
 	pdbfile = Malloc(char, MAX_FILE_NAME);
@@ -660,12 +660,15 @@ void minimization_gromacs(pdb_atom_t *pdb_atoms, const input_parameters_t *in_pa
 	call_mdrun2minimization(pdbfile, in_para->path_local_execute, 
 	    		in_para->path_gromacs_programs);
 
-	//Loading conformation that was miminizated
-	load_pdb_file(pdb_atoms, NULL, in_para->path_local_execute, pdbfile, numatom);
-
 	//Call to clean the simulation
 	clean_gromacs_simulation(in_para->path_local_execute);
 
+	//Getting information 
+	char *path_file = path_join_file(in_para->path_local_execute,pdbfile);
+	*numatom_after_min = get_num_atom(path_file);
+	strcpy(pdbfile_ret, pdbfile);
+
+	free(path_file);
 	free(pdbfile);
 
 }

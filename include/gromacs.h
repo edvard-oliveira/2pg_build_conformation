@@ -26,7 +26,7 @@ void init_gromacs_execution();
 void finish_gromacs_execution();
 void build_tpr_file(const char *pdbfile, const char *local_execute,
 		const char *path_gromacs_programs, const char *force_field, const char *mdp_file);
-void minimization_gromacs(pdb_atom_t *pdb_atoms, const input_parameters_t *in_para,
-	const int *numatom);
+void minimization_gromacs(pdb_atom_t *pdb_atoms, char *pdbfile_ret, int *numatom_after_min, 
+	const input_parameters_t *in_para, const int *numatom);
 
 #endif
