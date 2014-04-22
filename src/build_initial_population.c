@@ -98,36 +98,32 @@ void build_initial_population(const input_parameters_t *in_para){
     pdb_atom_t** pdb_pop = allocate_Population_pdb(&in_para->size_population, &top_global->numatom);
     pdb_atom_t** pdb_pop_after_min = NULL;
     population2pdb_atom(pdb_pop, population_p, &in_para->size_population, top_global);
-    display_msg("Checking Minimization \n");    
-    if ( in_para->gromacs_energy_min != ener_min_none){
-        init_gromacs_execution();
-        pdbfile = Malloc(char, MAX_FILE_NAME);
-        //Allocating newm population of atoms. It will be saved.
-        pdb_pop_after_min = Malloc(pdb_atom_t*,in_para->size_population);             
-        for (int p = 0; p < in_para->size_population;p++){
-            create_message(message,&p);
-            display_msg(message);
-            //  Apply minimization process based on population that was built by Dihedral
-            minimization_gromacs(pdb_pop[p], pdbfile, &numatom_after_min, in_para, 
-                &top_global->numatom );
-            /* Loading conformation that was miminizated. The number of atoms of this
-             * conformation can changed because the number of Hydrogen atoms is based on
-             * protonation state of residues.
-            */
-            pdb_pop_after_min[p] = allocate_pdbatom(&numatom_after_min);
-            load_pdb_file(pdb_pop_after_min[p], NULL, in_para->path_local_execute, pdbfile, 
-                &numatom_after_min);
-        }
-        finish_gromacs_execution();
-        free(pdbfile);
-
-        display_msg("Creating the Population file \n");
-        save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
-            &in_para->size_population, &numatom_after_min, pdb_pop_after_min, 
-            NULL );        
-    }else{
-        display_msg("Creating the Population file \n");
-        save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
-            &in_para->size_population, &top_global->numatom, pdb_pop, NULL );
+    display_msg("Minimization or Adding Hydrogen Atoms\n");        
+    init_gromacs_execution();
+    pdbfile = Malloc(char, MAX_FILE_NAME);
+    //Allocating newm population of atoms. It will be saved.
+    pdb_pop_after_min = Malloc(pdb_atom_t*,in_para->size_population);             
+    for (int p = 0; p < in_para->size_population;p++){
+        create_message(message,&p);
+        display_msg(message);
+        /* Apply minimization process or adding Hydrogen atoms in 
+         * population that was built by Dihedral representation.
+        */
+        minimization_gromacs(pdb_pop[p], pdbfile, &numatom_after_min, in_para, 
+            &top_global->numatom );
+        /* Loading new conformation. This conformation either miminizated or adding 
+         * Hydrogen atom by pdb2gmx. The number of atoms of this
+         * conformation should changed because the number of Hydrogen atoms is based on
+         * protonation state of residues.
+        */
+        pdb_pop_after_min[p] = allocate_pdbatom(&numatom_after_min);
+        load_pdb_file(pdb_pop_after_min[p], NULL, in_para->path_local_execute, pdbfile, 
+            &numatom_after_min);
     }
+    finish_gromacs_execution();
+    free(pdbfile);
+    display_msg("Creating the Population file \n");
+    save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
+        &in_para->size_population, &numatom_after_min, pdb_pop_after_min, 
+        NULL );    
 }

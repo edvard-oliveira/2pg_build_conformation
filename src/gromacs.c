@@ -656,9 +656,12 @@ void minimization_gromacs(pdb_atom_t *pdb_atoms, char *pdbfile_ret, int *numatom
    	build_tpr_file(pdbfile, in_para->path_local_execute, in_para->path_gromacs_programs, 
 	        	in_para->force_field, in_para->mdp_file_min);
 
-   	//Call mdrun program
-	call_mdrun2minimization(pdbfile, in_para->path_local_execute, 
-	    		in_para->path_gromacs_programs);
+   	if (in_para->gromacs_energy_min != ener_min_none){
+		//Call mdrun program
+		call_mdrun2minimization(pdbfile, in_para->path_local_execute, 
+	     		 in_para->path_gromacs_programs);
+
+   	}
 
 	//Call to clean the simulation
 	clean_gromacs_simulation(in_para->path_local_execute);
