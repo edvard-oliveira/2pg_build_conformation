@@ -237,7 +237,7 @@ static void _add_atoms_backbone(z_matrix_global_t *z_matrix,
 	type_aminos_t amino_id;
 	if ( (*res_id == 2) && (strcmp(top->top_global_atom[0].res_name, "ACE") == 0) ) {
 		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmN, atmC_, atmCH3_,
-				atmO_, angl_typ_dieh_1, 1.30, 2.06, 1.53, top);
+				atmHH31_, angl_typ_dieh_180, 1.30, 2.06, 1.53, top);
 		_add_atom_z_matriz(z_matrix, index_z_matrix, res_id,atmCA, atmN, atmC_, atmCH3_,
 				angl_typ_dieh_180, 1.49, 2.12, 1.30, top);		
 	}else{
@@ -303,7 +303,7 @@ static void _add_atoms_backbone_N_Terminal(z_matrix_global_t *z_matrix,
 		z_matrix->z_matrix_info[*index_z_matrix].bond_len_2 = 1.43;
 		z_matrix->z_matrix_info[*index_z_matrix].atom_angle = get_num_atom_from_topol(res_id,
 				atmC,top);
-		z_matrix->z_matrix_info[*index_z_matrix].bond_angle = PI - 1.9042;
+		z_matrix->z_matrix_info[*index_z_matrix].bond_angle = PI - 4.19;
 	}else{
 		//Adding first atom - Nitrogen
 		atom_reference = atmN;
@@ -1038,11 +1038,11 @@ static void _add_hydrogen_atoms_backbone_ACE_N_Terminal(z_matrix_global_t *z_mat
 		int *index_z_matrix, const int *res_id, const top_global_t *top){
 	/*Adds all Hydrogen atoms for ACE residue in backbone */
 	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH31, atmCH3, atmC,
-			atmO, angl_typ_dieh_180, 1.0, 1.9106, 1.49, top); 
+			atmO, angl_typ_dieh_180, 1.0, 1.92, 1.49, top); 
 	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH32, atmCH3, atmC,
-			atmO, angl_typ_dieh_trans_120, 1.0, 1.9106, 1.49, top); 
+			atmO, angl_typ_dieh_trans_120, 1.0, 1.92, 1.49, top); 
 	_add_atom_z_matriz(z_matrix, index_z_matrix, res_id, atmHH33, atmCH3, atmC,
-			atmO, angl_typ_dieh_trans_240, 1.0, 1.9106, 1.49, top); 
+			atmO, angl_typ_dieh_trans_240, 1.0, 1.92, 1.49, top); 
 }
 
 static void _add_hydrogen_atoms_backbone_NME_C_Terminal(z_matrix_global_t *z_matrix,
