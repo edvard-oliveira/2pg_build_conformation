@@ -135,6 +135,27 @@ void save_model_pdb_file(const char *path, const char *file_name, const int *num
 	fclose(pdbfile);
 }
 
+void save_adding_model_pdb_file(const char *path, const char *file_name, 
+	const int *num_model, const int *numatom, 
+	const pdb_atom_t *atoms_model, const pdb_seqres_t *seqres ){
+	/* This function save a set of models in PDB format.
+	   atoms_model can be a population of pdb_atom_t
+	*/
+	FILE *pdbfile=NULL;
+	int m = 0;
+	char *fname = path_join_file(path,file_name);
+	pdbfile = open_file(fname, fAPPEND);
+	if (*num_model == 1){
+		writeHeader(pdbfile, 10.5, numatom);	
+	}
+	writeModel(pdbfile, &m);
+	writeATOM(pdbfile, atoms_model, numatom);
+	writeEndModel(pdbfile);	
+	free(fname);
+	fclose(pdbfile);
+}
+
+
 void show_coordinates(const pdb_atom_t *atoms, const int *numatom){
 	/*Show coordinates of atoms of protein*/
 	display_msg("Showing coordinates of atoms \n");
