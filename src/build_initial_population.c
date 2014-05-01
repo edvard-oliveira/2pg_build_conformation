@@ -18,6 +18,34 @@
 #include "pdbio.h"
 #include "gromacs.h"
 
+
+static void build_name_pdb_file(char *file_name,
+    const int *ind){
+        char *ind_s;
+    ind_s = Malloc(char, 10);    
+    int2str(ind_s, ind);
+    strcpy(file_name, PREFIX_PDB_FILE_NAME_AUX);
+    strcat(file_name, ind_s);
+    strcat(file_name, ".pdb");
+    free(ind_s);        
+}
+
+static void save_pdb_files(pdb_atom_t** pdb_pop, const int *numatom, 
+    const int *size, const char *path ){
+
+    const pdb_atom_t* pdb_ind;
+    const pdb_seqres_t *seqres = NULL;
+    char *file_name;    
+
+    file_name = Malloc(char, MAX_FILE_NAME);
+    for (int ind = 0; ind < *size; ind++){
+        build_name_pdb_file(file_name, &ind);
+        pdb_ind = pdb_pop[ind];
+        save_pdb_file(path, file_name, numatom, pdb_ind, seqres);
+    }
+    free(file_name);
+}
+
 static void save_pop_file(const char *path, const char *file_name,
 		protein ** pop, int pop_size){
 	_save_population_file(path, file_name, pop, &pop_size);
@@ -40,6 +68,7 @@ void build_initial_population(const input_parameters_t *in_para){
 	int bond_angles;
     int numatom_after_min;
     char *pdbfile;
+    int size_to_min;
 
 	amino_t *primary_sequence;
 	library_dihedral_info_t* lib_dihe_info;
@@ -97,33 +126,50 @@ void build_initial_population(const input_parameters_t *in_para){
     //Saving Diehdral population to Cartesian Population
     pdb_atom_t** pdb_pop = allocate_Population_pdb(&in_para->size_population, &top_global->numatom);
     pdb_atom_t** pdb_pop_after_min = NULL;
+    pdb_atom_t** pdb_pop_input_min = NULL;
     population2pdb_atom(pdb_pop, population_p, &in_para->size_population, top_global);
+    display_msg("Saving file of before Minimization or Adding Hydrogen Atoms \n");
+    save_pdb_files(pdb_pop, &top_global->numatom,  &in_para->size_population, 
+        in_para->path_local_execute);    
     display_msg("Minimization or Adding Hydrogen Atoms\n");        
     init_gromacs_execution();
     pdbfile = Malloc(char, MAX_FILE_NAME);
     //Allocating newm population of atoms. It will be saved.
-    pdb_pop_after_min = Malloc(pdb_atom_t*,in_para->size_population);             
+    int model;
+    size_to_min = 1;
+    pdb_pop_after_min = Malloc(pdb_atom_t*,size_to_min);
+    pdb_pop_input_min = Malloc(pdb_atom_t*,size_to_min);
+    pdb_pop_input_min[0] = allocate_pdbatom(&top_global->numatom);
+    model = 1;
     for (int p = 0; p < in_para->size_population;p++){
         create_message(message,&p);
         display_msg(message);
         /* Apply minimization process or adding Hydrogen atoms in 
          * population that was built by Dihedral representation.
         */
-        minimization_gromacs(pdb_pop[p], pdbfile, &numatom_after_min, in_para, 
+        model = model + 1;
+        build_name_pdb_file(pdbfile,&p); 
+        load_pdb_file(pdb_pop_input_min[0], NULL, in_para->path_local_execute, pdbfile, 
+            &top_global->numatom);        
+        minimization_gromacs(pdb_pop_input_min[0], pdbfile, &numatom_after_min, in_para, 
             &top_global->numatom );
         /* Loading new conformation. This conformation either miminizated or adding 
          * Hydrogen atom by pdb2gmx. The number of atoms of this
          * conformation should changed because the number of Hydrogen atoms is based on
          * protonation state of residues.
         */
-        pdb_pop_after_min[p] = allocate_pdbatom(&numatom_after_min);
-        load_pdb_file(pdb_pop_after_min[p], NULL, in_para->path_local_execute, pdbfile, 
+        pdb_pop_after_min[0] = allocate_pdbatom(&numatom_after_min);
+        load_pdb_file(pdb_pop_after_min[0], NULL, in_para->path_local_execute, pdbfile, 
             &numatom_after_min);
+        save_adding_model_pdb_file(in_para->path_local_execute, 
+            in_para->initial_pop_file_name, 
+        &model, &numatom_after_min, pdb_pop_after_min[0], NULL );            
+        desAllocate_pdbatom(pdb_pop_after_min[0]);        
     }
     finish_gromacs_execution();
     free(pdbfile);
     display_msg("Creating the Population file \n");
-    save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
-        &in_para->size_population, &numatom_after_min, pdb_pop_after_min, 
-        NULL );    
+    //save_model_pdb_file(in_para->path_local_execute,in_para->initial_pop_file_name, 
+    //    &in_para->size_population, &numatom_after_min, pdb_pop_after_min, 
+    //    NULL );    
 }
