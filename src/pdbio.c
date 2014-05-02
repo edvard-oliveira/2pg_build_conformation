@@ -141,14 +141,13 @@ void save_adding_model_pdb_file(const char *path, const char *file_name,
 	/* This function save a set of models in PDB format.
 	   atoms_model can be a population of pdb_atom_t
 	*/
-	FILE *pdbfile=NULL;
-	int m = 0;
+	FILE *pdbfile=NULL;	
 	char *fname = path_join_file(path,file_name);
 	pdbfile = open_file(fname, fAPPEND);
 	if (*num_model == 1){
-		writeHeader(pdbfile, 10.5, numatom);	
+		writeHeader(pdbfile, 0.0, numatom);	
 	}
-	writeModel(pdbfile, &m);
+	writeModel(pdbfile, num_model);
 	writeATOM(pdbfile, atoms_model, numatom);
 	writeEndModel(pdbfile);	
 	free(fname);

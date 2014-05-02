@@ -140,7 +140,7 @@ void build_initial_population(const input_parameters_t *in_para){
     pdb_pop_after_min = Malloc(pdb_atom_t*,size_to_min);
     pdb_pop_input_min = Malloc(pdb_atom_t*,size_to_min);
     pdb_pop_input_min[0] = allocate_pdbatom(&top_global->numatom);
-    model = 1;
+    model = 0;
     for (int p = 0; p < in_para->size_population;p++){
         create_message(message,&p);
         display_msg(message);
